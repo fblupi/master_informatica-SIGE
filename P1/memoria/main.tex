@@ -1,0 +1,234 @@
+\input{estilo.tex}
+\usepackage{textcomp}
+\usepackage{hyperref}
+
+%----------------------------------------------------------------------------------------
+%	DATOS
+%----------------------------------------------------------------------------------------
+
+\newcommand{\myName}{Francisco Javier Bolívar Lupiáñez}
+\newcommand{\myDegree}{Máster en Ingeniería Informática}
+\newcommand{\myFaculty}{E. T. S. de Ingenierías Informática y de Telecomunicación}
+\newcommand{\myDepartment}{Ciencias de la Computación e Inteligencia Artificial}
+\newcommand{\myUniversity}{\protect{Universidad de Granada}}
+\newcommand{\myLocation}{Granada}
+\newcommand{\myTime}{\today}
+\newcommand{\myTitle}{Práctica 1}
+\newcommand{\mySubtitle}{Competición en Kaggle sobre Clasificación Binaria}
+\newcommand{\mySubject}{Sistemas Inteligentes para la Gestión de la Empresa}
+\newcommand{\myYear}{2016-2017}
+
+%----------------------------------------------------------------------------------------
+%	PORTADA
+%----------------------------------------------------------------------------------------
+
+
+\title{	
+	\normalfont \normalsize 
+	\textsc{\textbf{\mySubject \space (\myYear)} \\ \myDepartment} \\[20pt] % Your university, school and/or department name(s)
+	\textsc{\myDegree \\[10pt] \myFaculty \\ \myUniversity} \\[25pt]
+	\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+	\huge \myTitle: \mySubtitle \\ % The assignment title
+	\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+	\normalfont \normalsize
+}
+
+\author{
+	\myName \\ 
+	\texttt{fblupi} \\
+	\small Posición: X, Puntuación: 0.841
+}
+
+\date{\myTime} % Incluye la fecha actual
+%----------------------------------------------------------------------------------------
+%	INDICE
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	
+\definecolor{light-gray}{gray}{0.95}
+	
+\lstset {
+	basicstyle=\scriptsize,
+	frame=single,
+	backgroundcolor=\color{grey}
+}
+
+\lstdefinestyle{R}{
+	frame=single,
+	numbers=left,
+	language=R,
+	basicstyle=\footnotesize,
+	keywordstyle=\bfseries,
+	commentstyle=\itshape,
+	identifierstyle=\bfseries,
+}
+	
+\setcounter{page}{0}
+
+\maketitle % Muestra el Título
+\thispagestyle{empty}
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+\listoftables
+
+%\listoffigures
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\section{Exploración de datos}
+
+La primera fase que hay que realizar ante cualquier problema de este tipo es la exploración de datos para poner los cimientos sobre los que realizar el posterior proceso de análisis.
+\\ \\
+Los datos con los que contamos en el \textit{dataset} son \cite{KaggleTitanicData}:
+
+\begin{itemize}
+	\item \texttt{PassengerId}: Id único, no va a ser de utilidad
+	\item \texttt{PClass}: Clase en la que viajaba
+	\item \texttt{Name}: Nombre y título
+	\item \texttt{Sex}: Sexo
+	\item \texttt{Age}: Edad
+	\item \texttt{SibSp}: Número de hermanos y/o cónyuges
+	\item \texttt{Parch}: Número de padres y/o hijos
+	\item \texttt{Ticket}: Id del billete
+	\item \texttt{Fare}: Tarifa del viaje
+	\item \texttt{Cabin}: Cabina donde se alojó
+	\item \texttt{Embarked}: Dónde embarcó
+\end{itemize}
+
+De aquí podemos concluir que ni \texttt{PassengerId}, ni \texttt{Ticket} nos van a ser útiles pues son únicos. \texttt{Name} podría tener el mismo problema, pero se podría extraer el título para utilizarlo como información que puede resultar útil.
+\\ \\
+También hay otras variables como \texttt{Cabin} que son poco útiles pues tiene la mayoría de los valores perdidos.
+
+\subsection{La importancia del sexo, la edad y la clase}
+
+Se sabe que el protocolo por aquel entonces era el de mujeres y niños primero por lo que vamos a ver si de verdad se cumplió y nos puede ayudar a predecir quién murió y quién no.
+\\ \\
+En el \textit{dataset} de \textit{training}, el 62\% de los pasajeros murieron y frente al 38\% que sobrevivieron. En cuanto a hombres o mujeres, el 65\% eran hombres y el 35\% mujeres. Y en cuanto a niños o adultos (considerado adulto a partir de los 18 años), el 87\% eran adultos y el 13\% niños.
+\\ \\
+Combinando si son hombres o mujeres y adultos o niños tenemos la siguiente tabla:
+
+En primer lugar, vamos a ver el porcentaje de supervivientes:
+
+\begin{table}[H]
+	\centering
+	\caption{Porcentaje de supervivientes}
+	\label{tab:die-survive}
+	\begin{tabular}{|ll|}
+		\hline
+		Die       & Survive   \\ \hline
+		0.6161616 & 0.3838384 \\ \hline
+	\end{tabular}
+\end{table}
+
+de sexo:
+
+\begin{table}[H]
+	\centering
+	\caption{Porcentaje de sexo}
+	\label{tab:male-female}
+	\begin{tabular}{|ll|}
+		\hline
+		Male     & Female   \\ \hline
+		0.647587 & 0.352413 \\ \hline
+	\end{tabular}
+\end{table}
+
+y de adultos (considerándose a partir de los 18 años):
+
+\begin{table}[H]
+	\centering
+	\caption{Porcentaje de edad}
+	\label{tab:child-adult}
+	\begin{tabular}{|ll|}
+		\hline
+		Child     & Adult     \\ \hline
+		0.1268238 & 0.8731762 \\ \hline
+	\end{tabular}
+\end{table}
+
+Combinando edad y sexo tenemos el siguiente resultado:
+
+\begin{table}[H]
+	\centering
+	\caption{Supervivencia según edad y sexo}
+	\label{tab:age-sex}
+	\begin{tabular}{|ll|l|}
+		\hline
+		Age   & Sex    & Survived  \\ \hline
+		Adult & Female & 0.7528958 \\
+		Child & Female & 0.6909091 \\
+		Adult & Male   & 0.1657033 \\
+		Child & Male   & 0.3965517 \\ \hline
+	\end{tabular}
+\end{table}
+
+con el que podríamos hacer un primer envío dando por supervivientes a todas las mujeres. Solo con eso se tendría una puntuación de 0.76555.
+\\ \\
+No obstante, podemos intentar afinar más pues vemos que los hombres que son niños casi llega al 50\% de posibilidades de supervivencia. Agregando otros datos importantes como la clase y la tarifa del viaje obtenemos:
+
+\begin{table}[H]
+	\centering
+	\caption{Supervivencia según edad, sexo, clase y tarifa}
+	\label{tab:age-sex-fare-pclass}
+	\begin{tabular}{|llll|l|}
+		\hline
+		Age   & Fare        & Pclass & Sex    & Survived   \\ \hline
+		Adult & 20-30       & 1      & Female & 0.83333333 \\
+		Adult & 30+         & 1      & Female & 0.98750000 \\
+		Child & 30+         & 1      & Female & 0.87500000 \\
+		Adult & 10-20       & 2      & Female & 0.90625000 \\
+		Child & 10-20       & 2      & Female & 1.00000000 \\
+		Adult & 20-30       & 2      & Female & 0.88000000 \\
+		Child & 20-30       & 2      & Female & 1.00000000 \\
+		Adult & 30+         & 2      & Female & 1.00000000 \\
+		Child & 30+         & 2      & Female & 1.00000000 \\
+		Adult & \textless10 & 3      & Female & 0.56140351 \\
+		Child & \textless10 & 3      & Female & 0.85714286 \\
+		Adult & 10-20       & 3      & Female & 0.50000000 \\
+		Child & 10-20       & 3      & Female & 0.73333333 \\
+		Adult & 20-30       & 3      & Female & 0.40000000 \\
+		Child & 20-30       & 3      & Female & 0.16666667 \\
+		Adult & 30+         & 3      & Female & 0.11111111 \\
+		Child & 30+         & 3      & Female & 0.14285714 \\
+		Adult & \textless10 & 1      & Male   & 0.00000000 \\
+		Adult & 20-30       & 1      & Male   & 0.40000000 \\
+		Adult & 30+         & 1      & Male   & 0.35365854 \\
+		Child & 30+         & 1      & Male   & 1.00000000 \\
+		Adult & \textless10 & 2      & Male   & 0.00000000 \\
+		Adult & 10-20       & 2      & Male   & 0.11864407 \\
+		Child & 10-20       & 2      & Male   & 0.75000000 \\
+		Adult & 20-30       & 2      & Male   & 0.04761905 \\
+		Child & 20-30       & 2      & Male   & 0.75000000 \\
+		Adult & 30+         & 2      & Male   & 0.00000000 \\
+		Child & 30+         & 2      & Male   & 1.00000000 \\
+		Adult & \textless10 & 3      & Male   & 0.10931174 \\
+		Child & \textless10 & 3      & Male   & 0.15384615 \\
+		Adult & 10-20       & 3      & Male   & 0.12903226 \\
+		Child & 10-20       & 3      & Male   & 0.71428571 \\
+		Adult & 20-30       & 3      & Male   & 0.07142857 \\
+		Child & 20-30       & 3      & Male   & 0.20000000 \\
+		Adult & 30+         & 3      & Male   & 0.41666667 \\
+		Child & 30+         & 3      & Male   & 0.07692308 \\ \hline
+	\end{tabular}
+\end{table}
+
+donde podríamos afinar diciendo que si las mujeres son de la clase 3 y su tarifa es mayor a 20 murieron y los niños con tarifa mayor a 30 de clase 1 o 2 sobrevivieron. Con este pequeño árbol de decisión hecho manualmente explorando los datos obtenemos una puntuación mejor que la anterior de un total de 0.77990.
+
+%----------------------------------------------------------------------------------------
+%	REFERENCIAS
+%----------------------------------------------------------------------------------------
+
+\newpage
+
+\bibliography{referencias} %archivo referencias.bib que contiene las entradas 
+\bibliographystyle{plain} % hay varias formas de citar
+
+\end{document}

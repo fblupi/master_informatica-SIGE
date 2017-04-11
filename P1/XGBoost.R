@@ -100,4 +100,4 @@ pred <- predict(clf, dtest)
 pred_final <- ifelse(pred>0.5,1,0)
 
 submit <- data.frame(PassengerId = test$PassengerId, Survived = pred_final)
-write.csv(submit, file = "subs_xgb_1.csv", row.names = FALSE) 
+write.csv(submit, file = "xgboost.csv", row.names = FALSE) 
