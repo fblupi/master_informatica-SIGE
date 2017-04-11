@@ -515,11 +515,27 @@ No obstante el resultado ha sido bastante peor al obtenido con el \textit{condit
 
 \section{Presentación y discusión de resultados}
 
-Lala
+Se han realizado distintas pruebas que se han ido presentando a lo largo de todo el documento.
+\\ \\
+Vimos como, tan solo dando como supervivientes a todas las mujeres y a los hombres como muertos se llegaba a tener una puntuación de 0.76555 y afinando un poco este pequeño árbol de decisión manual teniendo en cuenta la edad, la tarifa y la clase ya se sube hasta 0.77990.
+\\ \\
+No obstante, para hacer un árbol de decisión a mano, es mejor utilizar librerías de R que los hacen por ti y, sin ni siquiera realizar un preprocesamiento, logra mejorar a 0.78469.
+\\ \\
+Pero claro, los datos que tenemos no están preprocesados y, eliminando los valores perdidos de edad (usando regresión), embarque (usando la moda para dos valores perdidos) y tarifa (usando la mediana para el único valor perdidos) y agregando nuevos datos como el título (a partir del nombre) y la familia con el número de familiares y el apellido, podemos mejorar el resultado alcanzando el 0.79426.
+\\ \\
+Tras haber utilizado los árboles de decisión básicos se pasó a utilizar técnicas más potentes como \textit{random forest}, que en su versión de \textit{conditional inference} logra alcanzar una puntuación de 0.81340 (la más alta que he obtenido).
+\\ \\
+Por último se utilizó \textit{XGBoost} para intentar mejorar los resultados pero no se logró mejorar ya que los datos tienen mucho ruido pues dos personas con datos muy parecidos pudieron tener un desenlace distinto en cuanto a supervivencia.
 
 \section{Conclusiones y trabajos futuros}
 
-Lala
+El \textit{dataset} de Titanic es uno de los más populares para empezar con la ciencia de datos. No obstante, obtener un resultado superior a 0.9 es muy complicado pues estamos ante un problema real donde dos personas muy parecidas pudieron tener un destino distinto.
+\\ \\
+Sin embargo, haciendo un análisis simple del problema se puede llegar a alcanzar el 0.77990 de acierto y utilizando técnicas como los árboles de decisión sobre los conjuntos de datos originales se llega al 0.78469. Y es que uno de los mayores saltos se encuentra aquí, cuando se preprocesan los datos antes de trabajar con ellos, pues el mismo algoritmo puede tener un punto de acierto más.
+\\ \\
+La técnica que mejor resultado me ha dado ha sido el \textit{conditional inference random forest} mejorando al \textit{XGBoost} que no funciona muy bien cuando hay ruido como el que se ha comentado.
+\\ \\
+Como trabajo futuro se podría intentar limpiar este ruido con técnicas como \textit{Smote} para volver a lanzar \textit{XGBoost} y ver si mejora los resultados de \textit{random forest}.
 
 \section{Listado de soluciones}
 
@@ -531,7 +547,7 @@ Lala
 		\hline
 		\# & Descripción & Algoritmos y software empleado & Score (train) & Score (test) & Pos. & Fecha y hora \\ \hline \hline
 		1  & Todas las mujeres sobreviven excepto aquellas que tengan Pclass=3 y Fare\textgreater=20. Todos los hombres mueren execpto aquellos que son niños y tienen Fare\textgreater=30 y PClass=1 o 2 & R & x & 0.77990 & 2629 & 4/11/17 9:00 \\ \hline
-		2  & Todas las mujeres sobreviven, todos los hombres mueren & R x & x & 0.76555 & 3806 & 4/11/17 9:05 \\ \hline
+		2  & Todas las mujeres sobreviven, todos los hombres mueren & R & x & 0.76555 & 3806 & 4/11/17 9:05 \\ \hline
 		3  & Árbol de decisión sin preprocesamiento & R (rpart) & x & 0.78469 & 2003 & 4/11/17 11:30 \\ \hline
 		4  & Árbol de decisión sin preprocesamiento dejándolo crecer al máximo & R (rpart) & x & 0.74163 & 5484 & 4/11/17 11:35 \\ \hline
 		5  & Árbol de decisión con preprocesamiento & R (rpart) & x & 0.79426 & 1250 & 4/11/17 11:40 \\ \hline
