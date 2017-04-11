@@ -28,7 +28,7 @@ train$Fare2 <- '30+'
 train$Fare2[train$Fare < 30 & train$Fare >= 20] <- '20-30'
 train$Fare2[train$Fare < 20 & train$Fare >= 10] <- '10-20'
 train$Fare2[train$Fare < 10] <- '<10'
-aggregate(Survived ~ Fare2 + Pclass + Sex, data=train, FUN=function(x) {sum(x)/length(x)})
+aggregate(Survived ~ Child + Fare2 + Pclass + Sex, data=train, FUN=function(x) {sum(x)/length(x)})
 
 # Create column child in test
 test$Child <- 0

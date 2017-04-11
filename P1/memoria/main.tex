@@ -58,7 +58,7 @@
 	frame=single,
 	numbers=left,
 	language=R,
-	basicstyle=\footnotesize,
+	basicstyle=\tiny\ttfamily,
 	keywordstyle=\bfseries,
 	commentstyle=\itshape,
 	identifierstyle=\bfseries,
@@ -73,8 +73,7 @@
 
 \tableofcontents % para generar el índice de contenidos
 
-\listoftables
-
+%\listoftables
 %\listoffigures
 
 \newpage
@@ -84,6 +83,7 @@
 %----------------------------------------------------------------------------------------
 
 \section{Exploración de datos}
+\label{sec:exploracion-datos}
 
 La primera fase que hay que realizar ante cualquier problema de este tipo es la exploración de datos para poner los cimientos sobre los que realizar el posterior proceso de análisis.
 \\ \\
@@ -109,13 +109,13 @@ También hay otras variables como \texttt{Cabin} que son poco útiles pues tiene
 
 \subsection{La importancia del sexo, la edad y la clase}
 
-Se sabe que el protocolo por aquel entonces era el de mujeres y niños primero por lo que vamos a ver si de verdad se cumplió y nos puede ayudar a predecir quién murió y quién no.
+Se sabe que el protocolo por aquel entonces era el de mujeres y niños primero por lo que vamos a ver si de verdad se cumplió y nos puede ayudar a predecir quién murió y quién no \cite{TrevorStephensTutorial}.
 \\ \\
-En el \textit{dataset} de \textit{training}, el 62\% de los pasajeros murieron y frente al 38\% que sobrevivieron. En cuanto a hombres o mujeres, el 65\% eran hombres y el 35\% mujeres. Y en cuanto a niños o adultos (considerado adulto a partir de los 18 años), el 87\% eran adultos y el 13\% niños.
-\\ \\
-Combinando si son hombres o mujeres y adultos o niños tenemos la siguiente tabla:
-
 En primer lugar, vamos a ver el porcentaje de supervivientes:
+
+\begin{lstlisting}[style=R]
+prop.table(table(train$Survived))
+\end{lstlisting}
 
 \begin{table}[H]
 	\centering
@@ -130,6 +130,10 @@ En primer lugar, vamos a ver el porcentaje de supervivientes:
 
 de sexo:
 
+\begin{lstlisting}[style=R]
+prop.table(table(train$Sex))
+\end{lstlisting}
+
 \begin{table}[H]
 	\centering
 	\caption{Porcentaje de sexo}
@@ -143,6 +147,13 @@ de sexo:
 
 y de adultos (considerándose a partir de los 18 años):
 
+\begin{lstlisting}[style=R]
+train$Child <- 0
+train$Child[train$Age < 18] <- 1
+prop.table(table(train$Child))
+\end{lstlisting}
+
+
 \begin{table}[H]
 	\centering
 	\caption{Porcentaje de edad}
@@ -155,6 +166,10 @@ y de adultos (considerándose a partir de los 18 años):
 \end{table}
 
 Combinando edad y sexo tenemos el siguiente resultado:
+
+\begin{lstlisting}[style=R]
+aggregate(Survived ~ Child + Sex, data=train, FUN=function(x) {sum(x)/length(x)})
+\end{lstlisting}
 
 \begin{table}[H]
 	\centering
@@ -173,6 +188,14 @@ Combinando edad y sexo tenemos el siguiente resultado:
 con el que podríamos hacer un primer envío dando por supervivientes a todas las mujeres. Solo con eso se tendría una puntuación de 0.76555.
 \\ \\
 No obstante, podemos intentar afinar más pues vemos que los hombres que son niños casi llega al 50\% de posibilidades de supervivencia. Agregando otros datos importantes como la clase y la tarifa del viaje obtenemos:
+
+\begin{lstlisting}[style=R]
+train$Fare2 <- '30+'
+train$Fare2[train$Fare < 30 & train$Fare >= 20] <- '20-30'
+train$Fare2[train$Fare < 20 & train$Fare >= 10] <- '10-20'
+train$Fare2[train$Fare < 10] <- '<10'
+aggregate(Survived ~ Child + Fare2 + Pclass + Sex, data=train, FUN=function(x) {sum(x)/length(x)})
+\end{lstlisting}
 
 \begin{table}[H]
 	\centering
@@ -221,6 +244,158 @@ No obstante, podemos intentar afinar más pues vemos que los hombres que son ni�
 \end{table}
 
 donde podríamos afinar diciendo que si las mujeres son de la clase 3 y su tarifa es mayor a 20 murieron y los niños con tarifa mayor a 30 de clase 1 o 2 sobrevivieron. Con este pequeño árbol de decisión hecho manualmente explorando los datos obtenemos una puntuación mejor que la anterior de un total de 0.77990.
+
+\section{Preprocesamiento de datos}
+
+En esta sección trataremos valores perdidos así como extraer nuevo conocimiento de distintas variables \cite{TrevorStephensTutorial}.
+
+\subsection{Nombres y familias}
+
+Como se comentó en la Sección \ref{sec:exploracion-datos}, los nombres podrían parecer únicos, pero se puede extraer información para clasificarlos por títulos y familias pues títulos más importantes podrían haber tenido prioridad para salvarse y las familias, al ir lo más probable juntas, tendrían posibilidad de sobrevivir o morir todos.
+\\ \\
+Esto se ha hecho tanto con los \textit{dataset} de \textit{train} como de \textit{test}:
+
+\begin{lstlisting}[style=R]
+combi <- rbind(train, test)
+\end{lstlisting}
+
+\subsubsection{Títulos}
+
+En primer lugar vamos a extraer el título de cada una de las entradas y agregarlo como un atributo más:
+
+\begin{lstlisting}[style=R]
+combi$Name <- as.character(combi$Name)
+combi$Title <- sapply(combi$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][2]})
+combi$Title <- sub(' ', '', combi$Title)
+\end{lstlisting}
+
+Con esto obtenemos:
+
+\begin{itemize}
+	\item \textit{Capt}: 1
+	\item \textit{Col}: 4
+	\item \textit{Don}: 1
+	\item \textit{Dona}: 1
+	\item \textit{Dr}: 8
+	\item \textit{Jonkheer}: 1
+	\item \textit{Lady}: 1
+	\item \textit{Major}: 2
+	\item \textit{Master}: 61
+	\item \textit{Miss}: 260
+	\item \textit{Mlle}: 2
+	\item \textit{Mme}: 1
+	\item \textit{Mr}: 757
+	\item \textit{Mrs}: 197
+	\item \textit{Ms}: 2
+	\item \textit{Rev}: 8
+	\item \textit{Sir}: 1
+	\item \textit{the Countess}: 1
+\end{itemize}
+
+Agregando los grupos pequeños que significan los mismo:
+
+\begin{lstlisting}[style=R]
+combi$Title[combi$Title %in% c('Mme', 'Mlle')] <- 'Mlle'
+combi$Title[combi$Title %in% c('Capt', 'Don', 'Major', 'Sir')] <- 'Sir'
+combi$Title[combi$Title %in% c('Dona', 'Lady', 'the Countess', 'Jonkheer')] <- 'Lady'
+combi$Title <- factor(combi$Title)
+\end{lstlisting}
+
+obtenemos:
+
+\begin{itemize}
+	\item \textit{Col}: 4
+	\item \textit{Dr}: 8
+	\item \textit{Lady}: 4
+	\item \textit{Master}: 61
+	\item \textit{Miss}: 260
+	\item \textit{Mlle}: 3
+	\item \textit{Mr}: 757
+	\item \textit{Mrs}: 197
+	\item \textit{Ms}: 2
+	\item \textit{Rev}: 8
+	\item \textit{Sir}: 5
+\end{itemize}
+
+\subsubsection{Familias}
+
+Las familias grandes podrían tener más posibilidad de morir buscando a cada uno de los miembros para salvarse todos.
+\\ \\
+Lo primero que hay que hacer es combinar los campos \texttt{SibSp} y \texttt{Parch} que como vimos en la Sección \ref{sec:exploracion-datos} eran los que determinaban hermanos y/o cónyuges y padres y/o hijos:
+
+\begin{lstlisting}[style=R]
+combi$FamilySize <- combi$SibSp + combi$Parch + 1
+\end{lstlisting}
+
+Ahora extraeremos el apellido:
+
+\begin{lstlisting}[style=R]
+combi$Surname <- sapply(combi$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][1]})
+\end{lstlisting}
+
+Ahora agregaremos ambos valores y daremos valor \textit{Small} a los que tienen 3 familiares o menos:
+
+\begin{lstlisting}[style=R]
+combi$FamilyID <- paste(as.character(combi$FamilySize), combi$Surname, sep="")
+combi$FamilyID[combi$FamilySize <= 3] <- 'Small'
+\end{lstlisting}
+
+No obstante vemos que a veces no coincide el id con el número de miembros en esto. Esto puede ser porque haya familiares con distinto id por no estar casados o no haber cambiado el apellido de soltería. Para lidiar con esto se les dará valor \textit{Small}:
+
+\begin{lstlisting}[style=R]
+famIDs <- data.frame(table(combi$FamilyID))
+famIDs <- famIDs[famIDs$Freq <= 3,]
+combi$FamilyID[combi$FamilyID %in% famIDs$Var1] <- 'Small'
+combi$FamilyID <- factor(combi$FamilyID)
+\end{lstlisting}
+
+\subsection{Edad}
+
+El campo de edad tiene muchísimos valores perdidos (263) entre los datos de \textit{train} y de \textit{test}.
+
+\begin{lstlisting}[style=R]
+summary(combi$Age)
+\end{lstlisting}
+
+Para resolver esto, se va a realizar una predicción del valor de estas variables usando el árbol de decisión de la librería \texttt{rpart} con el método \texttt{anova} pues queremos predecir una variable contínua y no categórica.
+
+\begin{lstlisting}[style=R]
+Agefit <- rpart(Age ~ Pclass + Sex + SibSp + Parch + Fare + Embarked + Title + FamilySize,
+                data=combi[!is.na(combi$Age),], 
+                method="anova")
+combi$Age[is.na(combi$Age)] <- predict(Agefit, combi[is.na(combi$Age),])
+\end{lstlisting}
+
+\subsection{Embarque}
+
+El embarque tiene dos valores perdidos:
+
+\begin{lstlisting}[style=R]
+summary(combi$Embarked)
+\end{lstlisting}
+
+Como la mayoría salió desde Southampton, vamos a darle este valor:
+
+\begin{lstlisting}[style=R]
+which(combi$Embarked == '') # 62 830
+combi$Embarked[c(62,830)] = "S"
+combi$Embarked <- factor(combi$Embarked)
+\end{lstlisting}
+
+\subsection{Tarifa}
+
+La tarifa tiene un valor perdido:
+
+\begin{lstlisting}[style=R]
+summary(combi$Fare)
+\end{lstlisting}
+
+Por lo que le daremos la mediana:
+
+\begin{lstlisting}[style=R]
+which(is.na(combi$Fare)) # 1044
+combi$Fare[1044] <- median(combi$Fare, na.rm=TRUE)
+\end{lstlisting}
 
 %----------------------------------------------------------------------------------------
 %	REFERENCIAS

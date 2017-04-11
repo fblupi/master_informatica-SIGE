@@ -38,6 +38,8 @@ combi$Title[combi$Title %in% c('Capt', 'Don', 'Major', 'Sir')] <- 'Sir'
 combi$Title[combi$Title %in% c('Dona', 'Lady', 'the Countess', 'Jonkheer')] <- 'Lady'
 # Convert to a factor
 combi$Title <- factor(combi$Title)
+# Inspect new feature
+table(combi$Title)
 
 # Engineered variable: Family size
 combi$FamilySize <- combi$SibSp + combi$Parch + 1
@@ -54,6 +56,8 @@ famIDs <- famIDs[famIDs$Freq <= 2,]
 combi$FamilyID[combi$FamilyID %in% famIDs$Var1] <- 'Small'
 # Convert to a factor
 combi$FamilyID <- factor(combi$FamilyID)
+# Inspect new feature
+table(combi$FamilyID)
 
 # Split back into test and train sets
 train <- combi[1:891,]
