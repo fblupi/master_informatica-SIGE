@@ -246,6 +246,7 @@ aggregate(Survived ~ Child + Fare2 + Pclass + Sex, data=train, FUN=function(x) {
 donde podríamos afinar diciendo que si las mujeres son de la clase 3 y su tarifa es mayor a 20 murieron y los niños con tarifa mayor a 30 de clase 1 o 2 sobrevivieron. Con este pequeño árbol de decisión hecho manualmente explorando los datos obtenemos una puntuación mejor que la anterior de un total de 0.77990.
 
 \section{Preprocesamiento de datos}
+\label{sec:preprocesamiento}
 
 En esta sección trataremos valores perdidos así como extraer nuevo conocimiento de distintas variables \cite{TrevorStephensTutorial}.
 
@@ -337,14 +338,14 @@ Ahora agregaremos ambos valores y daremos valor \textit{Small} a los que tienen 
 
 \begin{lstlisting}[style=R]
 combi$FamilyID <- paste(as.character(combi$FamilySize), combi$Surname, sep="")
-combi$FamilyID[combi$FamilySize <= 3] <- 'Small'
+combi$FamilyID[combi$FamilySize <= 2] <- 'Small'
 \end{lstlisting}
 
 No obstante vemos que a veces no coincide el id con el número de miembros en esto. Esto puede ser porque haya familiares con distinto id por no estar casados o no haber cambiado el apellido de soltería. Para lidiar con esto se les dará valor \textit{Small}:
 
 \begin{lstlisting}[style=R]
 famIDs <- data.frame(table(combi$FamilyID))
-famIDs <- famIDs[famIDs$Freq <= 3,]
+famIDs <- famIDs[famIDs$Freq <= 2,]
 combi$FamilyID[combi$FamilyID %in% famIDs$Var1] <- 'Small'
 combi$FamilyID <- factor(combi$FamilyID)
 \end{lstlisting}
@@ -396,6 +397,78 @@ Por lo que le daremos la mediana:
 which(is.na(combi$Fare)) # 1044
 combi$Fare[1044] <- median(combi$Fare, na.rm=TRUE)
 \end{lstlisting}
+
+\section{Técnicas de clasificación}
+
+A continuación pasaremos a utilizar distintas técnicas de clasificación para ver con cuál obtenemos mejor resultado \cite{TrevorStephensTutorial}.
+
+\subsection{\textit{Decision Tree}}
+
+\subsubsection{Sin procesamiento}
+
+En primer lugar se probó sin antes preprocesar como se ha descrito en la sección \ref{sec:preprocesamiento}.
+
+\begin{lstlisting}[style=R]
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data=train, method="class")
+\end{lstlisting}
+
+Obteniendo el siguiente árbol:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/first-decision-tree}
+	\caption{Primer árbol de decisión sin preprocesamiento}
+	\label{fig:first-decision-tree}
+\end{figure}
+
+Con el que obtuvimos una puntuación de 0.78469.
+\\ \\
+También probamos el mismo pero haciendo que éste llegue hasta el final:
+
+\begin{lstlisting}[style=R]
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data=train,
+             method="class", control=rpart.control(minsplit=2, cp=0))
+\end{lstlisting}
+
+Obteniendo un árbol mucho más grande:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/first-big-decision-tree}
+	\caption{Primer árbol de decisión sin preprocesamiento dejando que llegue hasta el final}
+	\label{fig:first-big-decision-tree}
+\end{figure}
+
+Que además de ser más ilegible obtiene una peor puntuación de 0.74163.
+
+\subsubsection{Con preprocesamiento}
+
+Una vez hemos realizado las tareas de preprocesamiento de la Sección \ref{sec:preprocesamiento}, podemos utilizar estas nuevas variables para aplicarlas al árbol de decisión:
+
+\begin{lstlisting}[style=R]
+fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID,
+             data=train, method="class")
+\end{lstlisting}
+
+Obteniendo el siguiente árbol:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=14cm]{img/preprocessing-decision-tree}
+	\caption{Árbol de decisión con preprocesamiento}
+	\label{fig:preprocessing-decision-tree}
+\end{figure}
+
+Este árbol consigue mejorar la puntuación obteniendo la mejor puntuación personal hasta ahora de 0.79426.
+
+\subsection{\textit{Random Forest}}
+
+Lala
+
+\subsection{\textit{XGBoost}}
+
+Lala
+
 
 %----------------------------------------------------------------------------------------
 %	REFERENCIAS
