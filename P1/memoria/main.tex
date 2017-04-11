@@ -513,6 +513,33 @@ pred_final <- ifelse(pred>0.5,1,0)
 
 No obstante el resultado ha sido bastante peor al obtenido con el \textit{conditional inference random forest}, obteniendo 0.76077.
 
+\section{Presentación y discusión de resultados}
+
+Lala
+
+\section{Conclusiones y trabajos futuros}
+
+Lala
+
+\section{Listado de soluciones}
+
+\begin{table}[]
+	\centering
+	\caption{Tabla de resultados}
+	\label{tab:results}
+	\begin{tabular}{|l|p{5.1cm}p{1.8cm}p{1.2cm}p{1.2cm}p{0.6cm}p{1.5cm}|}
+		\hline
+		\# & Descripción & Algoritmos y software empleado & Score (train) & Score (test) & Pos. & Fecha y hora \\ \hline \hline
+		1  & Todas las mujeres sobreviven excepto aquellas que tengan Pclass=3 y Fare\textgreater=20. Todos los hombres mueren execpto aquellos que son niños y tienen Fare\textgreater=30 y PClass=1 o 2 & R & x & 0.77990 & x & x \\ \hline
+		2  & Todas las mujeres sobreviven, todos los hombres mueren & R x & x & 0.76555 & x & x \\ \hline
+		3  & Árbol de decisión sin preprocesamiento & R (rpart) & x & 0.78469 & x & x \\ \hline
+		4  & Árbol de decisión sin preprocesamiento dejándolo crecer al máximo & R (rpart) & x & 0.74163 & x & x \\ \hline
+		5  & Árbol de decisión con preprocesamiento & R (rpart) & x & 0.79426 & x & x \\ \hline
+		6  & Traditional random forest con preprocesamiento & R (rpart, randomForest) & x & 0.77033 & x & x \\ \hline
+		7  & Conditional inference random forest con preprocesamiento & R (rpart, randomForest, party) & x & 0.81340 & x & x \\ \hline
+		8  & XGBoost con preprocesamiento & R (rpart, kernlab, caret, xgboost) & x & 0.76077 & x & x \\ \hline       
+	\end{tabular}
+\end{table}
 
 %----------------------------------------------------------------------------------------
 %	REFERENCIAS
