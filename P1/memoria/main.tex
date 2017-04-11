@@ -494,14 +494,24 @@ Viendo el inesperado resultado, vamos a probar una alternativa distinta al \text
 set.seed(14)
 fit <- cforest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize
                + FamilyID, data = train, controls=cforest_unbiased(ntree=2000, mtry=3)) 
-
 \end{lstlisting}
 
 Con el que obtenemos nuestra mejor puntuación de 0.81340
 
 \subsection{\textit{XGBoost}}
 
-Lala
+En la literatura se presenta a \textit{XGBoost} como uno de los algoritmos más potentes y muchos ganadores de competiciones de Kaggle lo han usado. Por tanto, voy a intentar aplicarlo sobre los datos ya preprocesados:
+
+\begin{lstlisting}[style=R]
+param <- list(objective="binary:logistic", booster="gbtree", eval_metric="logloss")
+nround  = 3382
+set.seed(14)
+clf <- xgboost(param =param, dtrain, nrounds=nround, min_child_weight=1,verbose=0)
+pred <- predict(clf, dtest)
+pred_final <- ifelse(pred>0.5,1,0) 
+\end{lstlisting}
+
+No obstante el resultado ha sido bastante peor al obtenido con el \textit{conditional inference random forest}, obteniendo 0.76077.
 
 
 %----------------------------------------------------------------------------------------
