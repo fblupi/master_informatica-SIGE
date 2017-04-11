@@ -35,8 +35,8 @@
 
 \author{
 	\myName \\ 
-	\texttt{fblupi} \\
-	\small Posición: X, Puntuación: 0.841
+	\small Kaggle: \texttt{fblupi} \\
+	\small Posición: 416, Puntuación: 0.81340
 }
 
 \date{\myTime} % Incluye la fecha actual
@@ -463,7 +463,41 @@ Este árbol consigue mejorar la puntuación obteniendo la mejor puntuación pers
 
 \subsection{\textit{Random Forest}}
 
-Lala
+\subsubsection{\textit{Traditional Random Forest}}
+
+Aunque casi hayamos alcanzado el 0.8 usando un árbol de decisión con preprocesamiento, el uso de \textit{random forest} puede mejorar.
+\\ \\
+Para utilizar el \textit{random forest} clásico hay que modificar la variable \texttt{FamilyID} que habíamos creado en la Sección \ref{sec:preprocesamiento} pues tiene demasiadas categorías. Para ello creamos una nueva reduciendo las categorías considerando familia pequeña con tres individuos o menos en vez de con dos:
+
+\begin{lstlisting}[style=R]
+combi$FamilyID2 <- combi$FamilyID
+combi$FamilyID2 <- as.character(combi$FamilyID2)
+combi$FamilyID2[combi$FamilySize <= 3] <- 'Small'
+combi$FamilyID2 <- factor(combi$FamilyID2)
+\end{lstlisting}
+
+Y ya podemos aplicar el \textit{random forest}:
+
+\begin{lstlisting}[style=R]
+set.seed(14)
+fit <- randomForest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title
+                    + FamilySize + FamilyID2, data=train, importance=TRUE, ntree=2000)
+\end{lstlisting}
+
+Con el que obtenemos una puntuación de 0.77033 más baja de lo esperado.
+
+\subsubsection{\textit{Conditional Inference Random Forest}}
+
+Viendo el inesperado resultado, vamos a probar una alternativa distinta al \textit{random forest} tradicional que a diferencia de éste permite usar variables con un número alto de categorías, por lo que podemos usar el \texttt{FamilyID} que no cuenta como pequeñas a las familias de tres miembros:
+
+\begin{lstlisting}[style=R]
+set.seed(14)
+fit <- cforest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize
+               + FamilyID, data = train, controls=cforest_unbiased(ntree=2000, mtry=3)) 
+
+\end{lstlisting}
+
+Con el que obtenemos nuestra mejor puntuación de 0.81340
 
 \subsection{\textit{XGBoost}}
 

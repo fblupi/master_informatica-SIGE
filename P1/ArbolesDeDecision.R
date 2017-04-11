@@ -5,9 +5,10 @@ test <- read.csv("test.csv")
 
 # Install and load required packages for decision trees and forests
 library(rpart)
-install.packages('randomForest')
+library(rattle)
+library(rpart.plot)
+library(RColorBrewer)
 library(randomForest)
-install.packages('party')
 library(party)
 
 # Join together the test and train sets for easier feature engineering
@@ -53,6 +54,14 @@ combi$Embarked <- factor(combi$Embarked)
 #which(is.na(combi$Fare))
 combi$Fare[1044] <- median(combi$Fare, na.rm=TRUE)
 
+# New factor for Random Forests, only allowed <32 levels, so reduce number
+combi$FamilyID2 <- combi$FamilyID
+# Convert back to string
+combi$FamilyID2 <- as.character(combi$FamilyID2)
+combi$FamilyID2[combi$FamilySize <= 3] <- 'Small'
+# And convert back to factor
+combi$FamilyID2 <- factor(combi$FamilyID2)
+
 # Split back into test and train sets
 train <- combi[1:891,]
 test <- combi[892:1309,]
@@ -68,8 +77,8 @@ submit <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
 write.csv(submit, file = "preprocessingdecisiontree.csv", row.names = FALSE)
 
 # Build Random Forest Ensemble
-set.seed(415)
-fit <- randomForest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID,
+set.seed(14)
+fit <- randomForest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID2,
                     data=train, importance=TRUE, ntree=2000)
 # Look at variable importance
 varImpPlot(fit)
@@ -79,10 +88,10 @@ submit <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
 write.csv(submit, file = "firstforest.csv", row.names = FALSE)
 
 # Build condition inference tree Random Forest
-set.seed(415)
+set.seed(14)
 fit <- cforest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID,
                data = train, controls=cforest_unbiased(ntree=2000, mtry=3)) 
 # Now let's make a prediction and write a submission file
 Prediction <- predict(fit, test, OOB=TRUE, type = "response")
 submit <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
-write.csv(submit, file = "ciforest.csv", row.names = FALSE)
+write.csv(submit, file = "cforest.csv", row.names = FALSE)
