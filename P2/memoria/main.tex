@@ -93,21 +93,37 @@ Estas imágenes son fotos de cérvix femenina (parte inferior del útero) echada
 En el caso de las imágenes de \textit{train} las tenemos estructuradas en tres directorios distintos (\texttt{Type\_1}, \texttt{Type\_2} y \texttt{Type\_3}), uno por cada clase. En el caso de las imágenes de \textit{test} las tenemos todas en un solo directorio pues desconocemos el tipo de cada uno y es que ese será el objetivo de la práctica: clasificar cada una de estas 512 imágenes en los tres tipos distintos.
 \\ \\
 El conjunto de datos de \textit{train} consta 1481 imágenes, no obstante Kaggle proporciona más imágenes adicionales para aumenta a 7004 el número de imágenes para entrenar nuestros modelos.
-\\ \\
+
+\subsection{Dataset no balanceado}
+
 Lo primero que podemos observar es que tanto el conjunto básico (Figura \ref{fig:num-images-train-dataset}) como el que incluye las imágenes adicionales (Figura \ref{fig:num-images-train-extra-dataset}) se encuentran desequilibrados con pocas imágenes del tipo 1 y muchas de los tipos 2 y 3. Esto es algo que tendremos que tener muy en cuenta a la hora de realizar el preprocesamiento de datos.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=14cm]{img/num-images-train-dataset}
+	\includegraphics[width=12cm]{img/num-images-train-dataset}
 	\caption{Porcentaje de imágenes de cada tipo para el \textit{dataset} básico}
 	\label{fig:num-images-train-dataset}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=14cm]{img/num-images-train-extra-dataset}
+\includegraphics[width=12cm]{img/num-images-train-extra-dataset}
 \caption{Porcentaje de imágenes de cada tipo para el \textit{dataset} que incluye las imágenes adicionales}
 \label{fig:num-images-train-extra-dataset}
+\end{figure}
+
+\subsection{Imágenes que no corresponden a un cérvix}
+
+Además, a la hora de explorar cada uno de estos datos, nos encontramos con imágenes que no correspondían a un cérvix o se encontraban demasiado borrosas (Figura \ref{fig:no-cervix-image}). Obviamente, en el posterior proceso de preprocesamiento de datos se eliminarán para que no agreguen ningún tipo de ruido a nuestro modelo.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=3.5cm]{img/3086}
+	\includegraphics[width=3.5cm]{img/4065}
+	\includegraphics[width=3.5cm]{img/4533}
+	\includegraphics[width=3.5cm]{img/4367}
+	\caption{Ejemplos de imágenes que se encuentran en el \textit{dataset} pero no corresponden a un cérvix o se encuentran demasiado borrosas}
+	\label{fig:no-cervix-image}
 \end{figure}
 
 \section{Preprocesamiento de datos}
