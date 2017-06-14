@@ -128,7 +128,18 @@ Además, a la hora de explorar cada uno de estos datos, nos encontramos con imá
 
 \section{Preprocesamiento de datos}
 
-Lala
+Como comenté en la sección anterior. Lo primero que hicimos fue borrar todas las fotos que no correspondían a cérvix o estaban demasiado borrosas. Después de esto nos planteamos realizar \textit{data augmentation}. Para ello realizamos varios \textit{scripts} en R con los que realizábamos operaciones de rotación y volteo para generar hasta ocho imágenes más por cada imagen. No obstante no llegamos a utilizarlos por problemas en memoria en nuestros equipos, y es que ni siquiera podíamos leer a un tamaño de 224 x 224 (necesario para \textit{fine-tuning}) las 7000 imágenes de Kaggle.
+\\ \\
+Como hacía falta reducir el número de imágenes se aprovechó para hacer \textit{undersampling} y balancear el conjunto de datos (Figura \ref{fig:num-images-train-extra-balanced-dataset}). No se equilibró totalmente pero se hizo lo suficiente como para que dejase de ser un conjunto de datos desequilibrado.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{img/num-images-train-extra-balanced-dataset}
+	\caption{Porcentaje de imágenes de cada tipo para el \textit{dataset} que incluye las imágenes adicionales al que posteriormente se le ha realizado \textit{undersampling} para balancearlo.}
+	\label{fig:num-images-train-extra-balanced-dataset}
+\end{figure}
+
+El conjunto de datos final cuenta con 4716 imágenes (1217 del primer tipo, 1780 del segundo y 1719 del tercero).
 
 \section{Técnicas de clasificación}
 
