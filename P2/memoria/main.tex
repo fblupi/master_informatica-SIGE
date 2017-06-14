@@ -170,7 +170,53 @@ Por último se probó a hacer más compleja la red neuronal agregando dos ciclos
 \\ \\
 ¿A qué se debe esto? Quizás a que no se dejó entrenar durante un buen número de épocas. Pero sobre todo a que estábamos creando una topología a ciegas. Para perder horas de cómputo con esta red compleja, ¿por qué no probar con una topología que ha dado buenos resultados en otros problemas?
 \\ \\
-Era hora de pasar a probar el \textit{fine-tuning}
+Era hora de pasar a probar el \textit{fine-tuning}.
+
+\subsection{\textit{Fine-tuning}}
+
+Con el \textit{fine-tuning} nos encontramos muchísimos problemas. No en la implementación que se encuentra publicada en la propia web de Keras \cite{KerasApplications}.
+\\ \\
+Estos problemas eran relacionados con las limitaciones \textit{hardware} de nuestros equipos.
+\\ \\
+El primero de ellos nos impedía entrenar la CNN y es que no teníamos memoria suficiente para alojar a un tamaño de 224x224 (necesario para la mayoría de las redes) las 7000 fotos que proporciona Kaggle. Es entonces cuando aprovechamos para hacer el \textit{undersampling} y consecuente balanceo del \textit{dataset}.
+\\ \\
+El segundo problema era el del tiempo de cómputo. Pues al no contar con GPU una sola época duraba entre 40 y 80 minutos dependiendo de la topología. Lo que nos impedía realizar experimentos con agilidad. Por ello nos llevó varios días dejando entrenar la CNN hasta 13 horas. Por suerte, los dos últimos días se pudo contar con una GPU que reducía enormemente estos tiempos pasando de 40 minutos a 40 segundos por época. Pero era demasiado tarde y apenas se pudieron realizar unos pocos experimentos.
+\\ \\
+Se probó como base las topologías \textit{VGG16}, \textit{VGG19} y \textit{ResNet50} llegando a hacer \textit{submissions} solo con esta última pues no se consiguió que se aprendiese con las dos primeras. El \textit{log loss} era muy alto tras varias épocas incluso para el conjunto de datos de \textit{train}.
+\\ \\
+Se crearon tres topologías utilizando \textit{ResNet50} (Figura \ref{fig:fine-tuning-topologies}):
+
+\begin{itemize}
+	\item Una primera en la que se conectaba directamente la salida de ResNet50 a una capa \textit{Flatten}, una \textit{Fully Connected} de tamaño 3 (las tres posibles salidas) que se conecta con una activación \textit{softmax}.
+	\item Otra utilizando la misma que se muestra en la web de Keras \cite{KerasApplications}.
+	\item Otra igual a la anterior pero disminuyendo los nodos de la capa \textit{Fully Connected}.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=2cm]{img/fine-tuning-topology-1}
+	\includegraphics[width=2cm]{img/fine-tuning-topology-2}
+	\includegraphics[width=2cm]{img/fine-tuning-topology-3}
+	\caption{Topologías utilizadas para el \textit{fine-tuning}.}
+	\label{fig:fine-tuning-topologies}
+\end{figure}
+
+Con la primera topología no se consiguieron buenos resultados y con la segunda se veía como sobreaprendía muy rápidamente. Fue con la última de ellas con la que se consiguió mejorar los resultados obtenidos usando \textit{learning from scratch}.
+\\ \\
+Al igual que se hizo con \textit{learning from scratch} se probó a cambiar distintos parámetros hasta obtener mejores resultados.
+\\ \\
+Además se probó a realizar el entrenamiento solo sobre las capas añadidas manualmente tras \textit{ResNet50}, entrenando también algunas de la red importada o realizando un entrenamiento en dos fases. La primera (durante pocas épocas) con un ratio de aprendizaje mayor sobre las capas añadidas manualmente y la segunda con un ratio de aprendizaje menor también sobre las últimas capas de \textit{ResNet50}.
+\\ \\
+Se observó como el \textit{log loss} sobre el conjunto de \textit{train} disminuía continuamente hasta la época que se dejó mientras que el de validación se estancaba antes en 0,8. Con el conjunto de \textit{test}, al subir los resultados a Kaggle, se vio que empezaba a dar peores resultados antes (Figura \ref{fig:loss-variation-fine-tuning}).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=12cm]{img/loss-variation-fine-tuning}
+	\caption{Variación de \textit{log loss} en los distintos conjuntos de datos a lo largo de las épocas.}
+	\label{fig:loss-variation-fine-tuning}
+\end{figure}
+
+En el gráfico (Figura \ref{fig:loss-variation-fine-tuning}) se muestrea en las épocas 50, 60, 65, 70 y 75. Obteniendo el mejor resultados en la 60. Sin embargo, no sabemos con certeza si entre la época 50 y 60 o la 60 y 65 hay un resultado mejor. Y es que elegir en qué época exacta parar de entrenar es complicado, aunque elegir una aproximada si puede resultar más sencillo viendo cómo se comporta el \textit{log loss} en los conjuntos de \textit{train} y validación pues nos pueden estar dando pistas de cuándo está sobreaprendiendo. En el caso de ejemplo que mostramos se ve cómo a partir de la época 65 aumenta el ritmo de bajada en el conjunto de \textit{train} y no en el de validación. A partir de la época 75 (no aparece en la gráfica) el \textit{log loss} sobre el conjunto de validación se estancaba llegando a aumentar en las épocas posteriores. Estos dos hechos nos hacen despreciar lo que pase a partir de estas épocas y centrarnos en las anteriores para buscar el mejor resultado posible.
 
 \section{Presentación y discusión de resultados}
 
