@@ -1,0 +1,3 @@
+[submodule "P2/image-classification-cervical-cancer"]
+	path = P2/image-classification-cervical-cancer
+	url = https://github.com/fblupi/image-classification-cervical-cancer.git
