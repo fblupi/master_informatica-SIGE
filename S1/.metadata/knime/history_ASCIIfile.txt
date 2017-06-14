@@ -1,4 +1,0 @@
-knime://knime.workflow/data.all
-knime://knime.workflow/iris.csv
-file:/C:/Users/fboli/Documents/GitHub/master_informatica-SIGE/S1/datasets/Iris/iris.csv
-knime://knime.workflow/data/pretendLog.log

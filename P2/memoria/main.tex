@@ -1,0 +1,98 @@
+\input{estilo.tex}
+\usepackage{textcomp}
+\usepackage{hyperref}
+
+%----------------------------------------------------------------------------------------
+%	DATOS
+%----------------------------------------------------------------------------------------
+
+\newcommand{\myName}{Francisco Javier Bolívar Lupiáñez}
+\newcommand{\myColleageName}{Juan Pablo González Casado}
+\newcommand{\myDegree}{Máster en Ingeniería Informática}
+\newcommand{\myFaculty}{E. T. S. de Ingenierías Informática y de Telecomunicación}
+\newcommand{\myDepartment}{Ciencias de la Computación e Inteligencia Artificial}
+\newcommand{\myUniversity}{\protect{Universidad de Granada}}
+\newcommand{\myLocation}{Granada}
+\newcommand{\myTime}{\today}
+\newcommand{\myTitle}{Práctica 2}
+\newcommand{\mySubtitle}{Clasificación de Imágenes}
+\newcommand{\mySubject}{Sistemas Inteligentes para la Gestión de la Empresa}
+\newcommand{\myYear}{2016-2017}
+
+%----------------------------------------------------------------------------------------
+%	PORTADA
+%----------------------------------------------------------------------------------------
+
+
+\title{	
+	\normalfont \normalsize 
+	\textsc{\textbf{\mySubject \space (\myYear)} \\ \myDepartment} \\[20pt] % Your university, school and/or department name(s)
+	\textsc{\myDegree \\[10pt] \myFaculty \\ \myUniversity} \\[25pt]
+	\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+	\huge \myTitle: \mySubtitle \\ % The assignment title
+	\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+	\normalfont \normalsize
+}
+
+\author{
+	\myName \\ 
+	\myColleageName \\ \\ 
+	\small Kaggle: \texttt{EchaEquipos} \\
+	\small Posición: 195, Puntuación: 0.80378 \\ 
+}
+
+\date{\myTime} % Incluye la fecha actual
+%----------------------------------------------------------------------------------------
+%	INDICE
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	
+\definecolor{light-gray}{gray}{0.95}
+	
+\lstset {
+	basicstyle=\scriptsize,
+	frame=single,
+	backgroundcolor=\color{grey}
+}
+
+\lstdefinestyle{R}{
+	frame=single,
+	numbers=left,
+	language=R,
+	basicstyle=\tiny\ttfamily,
+	keywordstyle=\bfseries,
+	commentstyle=\itshape,
+	identifierstyle=\bfseries,
+}
+	
+\setcounter{page}{0}
+
+\maketitle % Muestra el Título
+\thispagestyle{empty}
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+%\listoftables
+%\listoffigures
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCIAS
+%----------------------------------------------------------------------------------------
+
+\newpage
+
+\bibliography{referencias} %archivo referencias.bib que contiene las entradas 
+\bibliographystyle{plain} % hay varias formas de citar
+
+\end{document}
