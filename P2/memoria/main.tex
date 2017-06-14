@@ -114,7 +114,7 @@ Lo primero que podemos observar es que tanto el conjunto básico (Figura \ref{fi
 
 \subsection{Imágenes que no corresponden a un cérvix}
 
-Además, a la hora de explorar cada uno de estos datos, nos encontramos con imágenes que no correspondían a un cérvix o se encontraban demasiado borrosas (Figura \ref{fig:no-cervix-image}). Obviamente, en el posterior proceso de preprocesamiento de datos se eliminarán para que no agreguen ningún tipo de ruido a nuestro modelo.
+Además, a la hora de explorar cada uno de estos datos, nos encontramos con imágenes que no correspondían a un cérvix o se encontraban demasiado borrosas (Figura \ref{fig:no-cervix-image}). En Kaggle hay un foro de discusión sobre esto \cite{ImagesExcluded}. Obviamente, en el posterior proceso de preprocesamiento de datos se eliminarán para que no agreguen ningún tipo de ruido a nuestro modelo.
 
 \begin{figure}[H]
 	\centering
@@ -145,11 +145,32 @@ El conjunto de datos final cuenta con 4716 imágenes (1217 del primer tipo, 1780
 
 \subsection{\textit{Learning from scratch}}
 
-Lala
+Lo primero que hicimos fue crear una CNN (\textit{Convolutional Neural Network}) desde cero. Para ello intentamos realizarlo con MXNet en R. Pero tras varios días lanzando el \textit{script} con distintos parámetros no conseguíamos que predijese porcentajes distintos para cada imagen. Y es que al principio pensábamos que era por culpa de la red simple que usábamos pero al probar con una topología famosa (AlexNet) y seguir obteniendo estos resultados, empezamos a sospechar que era algún error de programación en el \textit{script}. Lo depuramos para intentar encontrar el \textit{bug}, pero al no encontrarlo pasamos a utilizar Keras en Python.
+\\ \\
+Comenzamos siguiendo un \textit{kernel} \cite{StartKernel} con el que se garantizaba bajar el \textit{loss} de 1.
+\\ \\
+Este \textit{kernel} redimensiona y normaliza las imágenes, realiza \textit{data augmentation}, genera un conjunto de validación a partir de los datos de \textit{train} y entrena una red neuronal simple (Figura \ref{fig:kernel-cnn}) con la que posteriormente predice y exporta a CSV.
 
-\subsection{\textit{Fine-tuning}}
+\begin{figure}[H]
+	\centering
+	\includegraphics[height=17cm]{img/kernel-cnn}
+	\caption{Topología de la red usada en el \textit{kernel} básico que se ha utilizado como base.}
+	\label{fig:kernel-cnn}
+\end{figure}
 
-Lala
+Se empezó utilizando el conjunto de datos de \textit{train} completo (pues todavía no se había realizado el \textit{undersampling} para el balanceo).
+\\ \\
+Se probó a variar el número de épocas para ver cuándo se estancaba la pérdida de \textit{loss} (o subía) en el conjunto de validación para detectar cuando sobre aprendía.
+\\ \\
+También se probó a variar el tamaño de las imágenes y vimos como con una red tan simple apenas se notaba la diferencia y se podían usar imágenes de incluso 32x32 obteniendo resultados similares a los obtenidos con imágenes de 128x128.
+\\ \\
+Lo siguiente que se probó a variar fue el tamaño del \textit{batch} y el \textit{samples per epoch}. Viendo que si se aumentaba este segundo parámetro se llegaba a aprender en menor número de épocas.
+\\ \\
+Por último se probó a hacer más compleja la red neuronal agregando dos ciclos más de capas \textit{Convolution}, \textit{Activation}, \textit{Pooling}, así como agregar más capas \textit{Fully Connected}. Sin embargo lo único que se consiguió con esto fue aumentar el tiempo de cómputo, que era casi despreciable con el modelo sencillo, porque los resultados eran ligeramente peores que los obtenidos anteriormente con la CNN simple.
+\\ \\
+¿A qué se debe esto? Quizás a que no se dejó entrenar durante un buen número de épocas. Pero sobre todo a que estábamos creando una topología a ciegas. Para perder horas de cómputo con esta red compleja, ¿por qué no probar con una topología que ha dado buenos resultados en otros problemas?
+\\ \\
+Era hora de pasar a probar el \textit{fine-tuning}
 
 \section{Presentación y discusión de resultados}
 
