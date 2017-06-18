@@ -218,6 +218,76 @@ Se observó como el \textit{log loss} sobre el conjunto de \textit{train} dismin
 
 En el gráfico (Figura \ref{fig:loss-variation-fine-tuning}) se muestrea en las épocas 50, 60, 65, 70 y 75. Obteniendo el mejor resultados en la 60. Sin embargo, no sabemos con certeza si entre la época 50 y 60 o la 60 y 65 hay un resultado mejor. Y es que elegir en qué época exacta parar de entrenar es complicado, aunque elegir una aproximada si puede resultar más sencillo viendo cómo se comporta el \textit{log loss} en los conjuntos de \textit{train} y validación pues nos pueden estar dando pistas de cuándo está sobreaprendiendo. En el caso de ejemplo que mostramos se ve cómo a partir de la época 65 aumenta el ritmo de bajada en el conjunto de \textit{train} y no en el de validación. A partir de la época 75 (no aparece en la gráfica) el \textit{log loss} sobre el conjunto de validación se estancaba llegando a aumentar en las épocas posteriores. Estos dos hechos nos hacen despreciar lo que pase a partir de estas épocas y centrarnos en las anteriores para buscar el mejor resultado posible.
 
+\subsection{\textit{OVO} y \textit{OVA}}
+
+Hasta ahora se ha realizado clasificación multiclase en la que la red neuronal tenía una salida \textit{softmax} con tres nodos, uno correspondiente a cada clase.
+\\ \\
+El siguiente enfoque es probar otras dos técnicas distintas a la hora de clasificar utilizando las mismas CNN. Estas dos técnicas tratan de convertir el problema de clasificación multiclase en problemas de clasificación binarios y son One vs. One (OVO) y One vs. All (OVA), también conocido como One vs. Rest (OVR).
+
+\subsubsection{\textit{OVO}}
+
+Usando OVO se entrenarán tres clasificadores distintos para distinguir entre dos clases: Tipo 1 vs. Tipo 2, Tipo 1 vs. Tipo 3 y Tipo 2 vs. Tipo 3.
+\\ \\
+Obviamente, para cada clasificador se utilizarán como entrenamiento las imágenes de los tipos que se comparan, ignorando la del tipo que no está comparando.
+\\ \\
+Una vez entrenados se va a predecir el tipo de cada imagen pasándola por cada clasificador que obtendrá como salida dos porcentajes, uno por cada uno de los dos tipos. Estos porcentajes se combinarán para obtener el resultado final de porcentaje para cada uno de los tres tipos.
+\\ \\
+Para combinar estos datos no hay ningún método preestablecido y se podrían utilizar varias técnicas. Por ejemplo, supongamos que tenemos estas salidas:
+
+\begin{itemize}
+	\item Tipo 1: 0,7 vs Tipo 2: 0,3
+	\item Tipo 1: 0,55 vs Tipo 3: 0,45
+	\item Tipo 2: 0,4 vs Tipo 3: 0,6
+\end{itemize}
+
+Se podría multiplicar las dos salidas de cada tipo y normalizarlas para que la suma de los tres porcentajes sea 1.
+
+\begin{itemize}
+	\item Combinación tipo 1: $ 0,7 \times 0,55 = 0,385 $
+	\item Combinación tipo 2: $ 0,3 \times 0,4 = 0,12 $
+	\item Combinación tipo 3: $ 0,45 \times 0,6 = 0,27 $
+	\item Tipo 1 + Tipo 2 + Tipo 3 = $ 0,385 + 0,12 + 0,27 = 0,775 $
+	\item Salida tipo 1: $ \frac{0,385}{0,775} = 0.5 $
+	\item Salida tipo 2: $ \frac{0,12}{0,775} = 0.15 $
+	\item Salida tipo 3: $ \frac{0,27}{0,775} = 0.35 $
+\end{itemize}
+
+Otra opción podría ser realizar la media que directamente obtiene una salida normalizada:
+
+\begin{itemize}
+	\item Salida tipo 1: $ \frac{0,7 + 0,55}{3} = 0.42 $
+	\item Salida tipo 2: $ \frac{0,3 + 0,4}{3} = 0.23 $
+	\item Salida tipo 3: $ \frac{0,45 + 0,6}{3} = 0.35 $
+\end{itemize}
+
+\subsubsection{\textit{OVA}}
+
+Usando OVA se utilizarán también otros tres clasificadores pero esta vez distinguirán entre una clase y el resto: Tipo 1 vs. Tipo 2-3, Tipo 2 vs. Tipo 1-3 y Tipo 3 vs. Tipo 1-2.
+\\ \\
+Para ello se pueden crear tres directorios nuevos combinando las imágenes de dos de los tipos y crear los clasificadores igual que con OVO. 
+\\ \\
+Para combinar los resultados tampoco hay ningún método estipulado. El método más sencillo que se nos ha ocurrido es utilizar las salidas en las que el tipo hace de \textit{one} y normalizarlas para que sus sumas sean 1.
+\\ \\
+Por ejemplo, supongamos que tenemos estas salidas en los distintos clasificadores:
+
+\begin{itemize}
+	\item Tipo 1: 0,55 vs Tipo 2-3: 0,45
+	\item Tipo 2: 0,4 vs Tipo 1-3: 0,6
+	\item Tipo 3: 0,1 vs Tipo 1-2: 0,9
+\end{itemize}
+
+La salida final sería:
+
+\begin{itemize}
+	\item Salida tipo 1: $ \frac{0,55}{0,55 + 0,4 + 0,1} = 0.52 $
+	\item Salida tipo 2: $ \frac{0,4}{0,55 + 0,4 + 0,1} = 0.38 $
+	\item Salida tipo 3: $ \frac{0,1}{0,55 + 0,4 + 0,1} = 0.1 $
+\end{itemize}
+
+\subsection{Extracción de características}
+
+Lala
+
 \section{Presentación y discusión de resultados}
 
 Lala
