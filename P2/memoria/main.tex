@@ -286,7 +286,17 @@ La salida final sería:
 
 \subsection{Extracción de características}
 
-Lala
+Hasta ahora, ya sea en \textit{learning from scratch} o \textit{fine-tuning}, o en clasificación multiclase, OVO u OVA, la técnica utilizada para predecir ha sido una CNN. No obstante hay más posibilidades para predecir clases.
+\\ \\
+Una de ellas es la extracción de características extrayendo los mapas de características de la CNN para su posterior uso en técnicas clásicas de \textit{machine learning} como \textit{random forest}, \textit{boosting} o SVM (\textit{Support Vector Machine}).
+\\ \\
+Para la extraer las características de una CNN usando Keras se puede seguir el ejemplo que hay en su documentación \cite{KerasApplications}. Y es que se haría igual que como se ha venido haciendo hasta ahora pero definiendo como salida del modelo a la hora de predecir la capa donde se encuentran los mapas de características.
+\\ \\
+Una vez obtenemos los mapas de características podemos usar la librería \textit{scikit-learn} \cite{Sklearn} donde encontramos distintas técnicas como el \textit{random forest} y el SVM \cite{KerasAndSklearn}.
+
+\subsection{\textit{Ensemblers}}
+
+Por último, se podría realizar un \textit{ensembler} con el que combinar varias de las técnicas citadas anteriormente con el objetivo de obtener un mejor resultado.
 
 \section{Presentación y discusión de resultados}
 
