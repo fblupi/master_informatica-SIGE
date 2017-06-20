@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>SIGE - Presentación Práctica</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background="img/bg.jpg" alt="ETSIIT">
+					<h1>SIGE - Práctica 2</h1>
+					<h3>Clasificación de imágenes</h3>
+					<hr>
+					<p>Francisco Javier Bolívar Lupiáñez</p>
+					<p>Juan Pablo González Casado</p>
+					<a href="http://fblupi.es/master_informatica-SIGE/">fblupi.es/master_informatica-SIGE/</a>
+				</section>
+				<section>
+					<section>
+						<h1>Exploración de datos</h1>		
+					</section>
+					<section>
+						<h3>Datos de Kaggle</h3>
+						<p>Imágenes de cérvix</p>
+						<ul>
+							<li>Formato: JPG</li>
+							<li>Tamaño: 3096x4128</li>
+							<li>Peso: 2.5 a 7.5 MB</li>
+						</ul>
+						<img src="img/imagenes.png" alt="Carpeta con imágenes de cérvix"/>
+					</section>
+					<section>
+						<h3>Test</h3>
+						<p>512 imágenes</p>
+						<h3>Train</h3>
+						<p>~1500 + ~5500 imágenes</p>
+					</section>
+					<section>
+						<h3>Dataset no balanceado</h3>
+						<p>Train</p>
+						<img src="img/num-images-train-dataset.png" alt="Porcentaje de imágenes de cada tipo para el dataset básico"/>
+					</section>
+					<section>
+						<h3>Dataset no balanceado</h3>
+						<p>Train extra</p>
+						<img src="img/num-images-train-extra-dataset.png" alt="Porcentaje de imágenes de cada tipo para el dataset extra"/>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h1>Pre-procesamiento de datos</h1>		
+					</section>
+					<section>
+						<h3>Imágenes que no corresponde a un cérvix</h3>
+						<img height="200px" src="img/3086.jpg" alt="Imágen de una muchacha"/>
+						<img height="200px" src="img/4065.jpg" alt="Imágen de motorola"/>
+						<img height="200px" src="img/4533.jpg" alt="Imágen de parte de cuerpo que no es cérvix"/>
+						<img height="200px" src="img/4367.jpg" alt="Imágen de un cérvix borrosa"/>
+					</section>
+					<section>
+						<h3>Balanceo de clases</h3>
+						<p>Train extra con undersampling</p>
+						<img src="img/num-images-train-extra-balanced-dataset.png" alt="Porcentaje de imágenes de cada tipo para el dataset extra tras aplicarle undersampling"/>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
