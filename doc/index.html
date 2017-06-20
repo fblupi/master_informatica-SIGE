@@ -180,6 +180,88 @@
 						</ul>
 					</section>
 				</section>
+				<section>
+					<section>
+						<h1>Presentación y discusión de resultados</h1>		
+					</section>
+					<section>
+						<h2>Learning from scratch</h2>
+						<ul>
+							<li>Comenzamos con MXNet pero predecía el mismo resultado para todas las imágenes</li>
+							<li>Nos pasamos a Keras con el script del kernel de Kaggle</li>
+							<li>Se usó el conjunto de datos desequilibrado con las imágenes extra</li>
+							<li>Se realizaron experimentos variando parámetros</li>
+							<li>Red simple -> Entrenamiento relativamente rápido (1 hora máximo)</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Estudio del sobre aprendizaje</h3>
+						<img src="img/loss-variation-learning-from-scratch.png" alt="Variación del log loss en los distintos conjuntos de datos (train y test) a lo largo de las épocas"/>
+					</section>
+					<section>
+						<h3>Otros experimentos</h3>
+						<ul>
+							<li>Imágenes 32x32 y 128x128 daban prácticamente el mismo resultado</li>
+							<li>Más samples per epoch hacía que se aprendiese (y sobreaprendiese) antes</li>
+							<li>Dataset balanceado bajó de ~0.91 a ~0.87</li>
+							<li>Red más compleja:</li>
+							<ul>
+								<li>Dos ciclos más de Conv-Act-Pool</li>
+								<li>Más capas Fully Connected</li>
+							</ul>
+							<li>La red daba peores resultados -> No sabemos hacer una topología buena</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Fine tuning</h2>
+						<ul>
+							<li>Implementación fácil, pero problemas a mansalva:</li>
+							<ul>
+								<li>No podíamos alojar a 224x224 las 7000 imágenes -> Tuvimos que hacer el undersampling</li>
+								<li>Tiempo de cómputo: Una época tardaba entre 40 y 80 minutos</li>
+								<li>Se llegaron a entrenar redes durante 13 horas con un ordenador que funcionó con los 8 núcleos al 100% durante 3 días seguidos sin descanso</li> 
+							</ul>
+						</ul>
+					</section>
+					<section>
+						<h3>Experimentos</h3>
+						<ul>
+							<li>Se probó con distintas topologías pero las submissions se hicieron solo con ResNet50 porque con el resto no aprendían bien ni el conjunto de train</li>
+							<li>Se crearon tres topologías</li>
+							<ul>
+								<li>Solo una capa Fully Connected para la salida</li>
+								<li>Ejemplo de Keras: Una capa Fully Connected intermedia de tamaño 1024</li>
+								<li>Ejemplo de Keras: Una capa Fully Connected intermedia de tamaño 512</li> 
+							</ul>
+						</ul>
+					</section>
+					<section>
+						<h3>Topologías</h3>
+						<img src="img/fine-tuning-topology-1.png" alt="Topología fine tuning 1"/>
+						<img src="img/fine-tuning-topology-2.png" alt="Topología fine tuning 2"/>
+						<img src="img/fine-tuning-topology-3.png" alt="Topología fine tuning 3"/>
+						<ul>
+							<li>Con la primera no se obtenían buenos resultados</li>
+							<li>Con la segunda sobre aprendía muy rápido</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Otros experimentos</h3>
+						<ul>
+							<li>Se probó ajustando batch y samples per epoch como en learning from scratch</li>
+							<li>Se probó el entrenamiento en dos fases que se proponía en Keras</li>
+							<ul>
+								<li>Primera: Se ajustan solo los pesos de las capas añadidas</li>
+								<li>Segunda: Se ajustan los pesos de las últimas capas de ResNet50</li>
+							</ul>
+							<li>Así se obtuvo el mejor resultado ~0.8 en la época 20+40</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Estudio del sobre aprendizaje</h3>
+						<img src="img/loss-variation-fine-tuning.png" alt="Variación del log loss en los distintos conjuntos de datos (train, val y test) a lo largo de las épocas"/>
+					</section>
+				</section>
 			</div>
 		</div>
 
