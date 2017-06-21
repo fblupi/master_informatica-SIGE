@@ -336,8 +336,7 @@ Esto ha sido debido a los altos requisitos \textit{hardware} que se necesitaban 
 \\ \\
 En nuestro caso, uno de los dos no podía ni entrenar una sola red neuronal por los requisitos de memoria RAM que superaban los 4GB con los que disponía cuando se utilizaba un \textit{dataset} más amplio para entrenar, además de los problemas de sobrecalentamiento que impedían entrenar más de cinco épocas con un modelo simple en \textit{learning from scratch}.
 \\ \\
-Se han probado diferentes sistemas. Por ejemplo scripts tanto en R como en Python y tanto Linux como Windows. En ningún caso se ha conseguido obtener resultados decentes o fiables con esta máquina.
-También se ha intentado utilizar tecnología cloud como AWS para realizar los cálculos, siendo imposible, ya que al utilizar servicios gratuitos las limitaciones de hardware eran bastante parecidas a las que nos hemos encontrado.
+Se han probado diferentes sistemas. Por ejemplo scripts tanto en R como en Python y tanto Linux como Windows. En ningún caso se ha conseguido obtener resultados decentes o fiables con esta máquina. También se ha intentado utilizar tecnología \textit{cloud} como AWS para realizar los cálculos, siendo imposible, ya que al utilizar servicios gratuitos las limitaciones de hardware eran bastante parecidas a las que nos hemos encontrado.
 \\ \\
 Al menos sí disponíamos de un portátil con el que realizar estos cálculos que ha estado funcionando a pleno rendimiento durante varios días seguidos (sin descanso) llegando a entrenar redes neuronales durante 13 horas. Pero, también por problemas de memoria no hemos podido realizar el \textit{data augmentation} al nivel que queríamos y hemos tenido que hacer \textit{undersampling} en lugar de \textit{oversampling} para balancear el conjunto de datos de \textit{train}.
 \\ \\
